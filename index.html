@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Safon - Referral Management</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Notification message here</span>
+    </div>
+    
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="modal-title">Withdraw Funds</div>
+            <div class="modal-body">
+                <span class="method-label">Select Withdrawal Method</span>
+                <div class="withdraw-options-modal" id="withdrawOptionsModal">
+                    <div class="withdraw-option-modal" data-method="telebirr">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div class="name">Telebirr</div>
+                        <div class="fee">Fee: 1%</div>
+                    </div>
+                    <div class="withdraw-option-modal" data-method="cbe">
+                        <i class="fas fa-university"></i>
+                        <div class="name">CBE</div>
+                        <div class="fee">Fee: 1.5%</div>
+                    </div>
+                    <div class="withdraw-option-modal" data-method="boa">
+                        <i class="fas fa-landmark"></i>
+                        <div class="name">BOA</div>
+                        <div class="fee">Fee: 1.5%</div>
+                    </div>
+                    <div class="withdraw-option-modal" data-method="chapa">
+                        <i class="fas fa-money-check-alt"></i>
+                        <div class="name">Chapa</div>
+                        <div class="fee">Fee: 1.2%</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="withdrawAmount">Amount (ETB)</label>
+                    <input type="number" id="withdrawAmount" placeholder="Enter amount to withdraw" min="10" max="2500">
+                    <div class="info-text">Available: <span id="availableBalance">ETB 2,500.00</span></div>
+                </div>
+                <div class="form-group">
+                    <label for="accountInfo">Account Information</label>
+                    <input type="text" id="accountInfo" placeholder="Phone number or account ID">
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: -10px; margin-bottom: 20px;">
+                    Enter your Telebirr phone number, CBE account number, BOA account number, or Chapa account
+                </p>
+            </div>
+            <button class="modal-btn" id="confirmWithdraw">Confirm Withdrawal</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeAdminModal">&times;</button>
+            <div class="modal-title">Admin Dashboard</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="adminUsername">Username</label>
+                    <input type="text" id="adminUsername" placeholder="Admin username">
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" placeholder="Admin password">
+                </div>
+            </div>
+            <button class="modal-btn" id="adminLogin">Login</button>
+        </div>
+    </div>
+    
+    <header>
+        <div class="logo">
+            <i class="fas fa-handshake"></i>
+            <span>Safon</span>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <button id="adminBtn" class="admin-btn">
+                <i class="fas fa-lock"></i>
+            </button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <!-- Welcome Banner -->
+            <div class="card">
+                <h1 style="font-size: 1.8rem; margin-bottom: 10px; color: var(--primary);">Welcome to Safon</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">Your hub for managing referrals and earnings</p>
+                <div style="display: flex; justify-content: center; margin: 20px 0;">
+                    <div style="width: 60px; height: 4px; background: var(--primary); border-radius: 2px;"></div>
+                </div>
+            </div>
+            
+            <!-- Referral Link Section -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-link"></i>
+                    <span>Your Referral Link</span>
+                </div>
+                <p style="margin-bottom: 15px; color: var(--text-secondary);">Share this link to invite others and earn rewards</p>
+                
+                <div class="referral-link-container">
+                    <div class="referral-link" id="referralLink">https://safon.example.com/join/USER123</div>
+                    <button class="copy-btn" id="copyBtn">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                
+                <div class="share-buttons">
+                    <button class="share-btn" id="shareTelegram">
+                        <i class="fab fa-telegram"></i> Telegram
+                    </button>
+                    <button class="share-btn" id="shareWhatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button class="share-btn" id="shareOthers">
+                        <i class="fas fa-share-alt"></i> Others
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Referral Dashboard -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Referral Dashboard</span>
+                </div>
+                <p style="margin-bottom: 15px; color: var(--text-secondary);">Track your referral progress here</p>
+                
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle" style="color: var(--success); font-size: 1.5rem;"></i>
+                        <div class="stat-value" id="successfulReferrals">15</div>
+                        <div class="stat-label">Successful Referrals</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock" style="color: var(--warning); font-size: 1.5rem;"></i>
+                        <div class="stat-value" id="pendingReferrals">5</div>
+                        <div class="stat-label">Pending Referrals</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Balance Section -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-wallet"></i>
+                    <span>Your Balance</span>
+                </div>
+                <p style="margin-bottom: 15px; color: var(--text-secondary);">Manage your earnings and make withdrawals</p>
+                
+                <div class="balance-card">
+                    <div class="balance-label">Available for withdrawal</div>
+                    <div class="balance-amount">
+                        <span class="etb-symbol">ETB</span> 
+                        <span id="balanceAmount">2,500.00</span>
+                    </div>
+                    <button class="withdraw-btn" id="withdrawBtn">
+                        <i class="fas fa-money-bill-wave"></i> Withdraw Funds
+                    </button>
+                </div>
+                
+                <div class="transaction-history">
+                    <div class="card-title">
+                        <i class="fas fa-history"></i>
+                        <span>Transaction History</span>
+                    </div>
+                    <div class="transactions-container" id="transactionsContainer">
+                        <div class="transaction-item">
+                            <div class="transaction-method">Telebirr</div>
+                            <div class="transaction-amount">ETB 500.00</div>
+                            <div class="transaction-status success">Completed</div>
+                            <div class="transaction-date">2025-05-15</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-method">CBE</div>
+                            <div class="transaction-amount">ETB 1,000.00</div>
+                            <div class="transaction-status pending">Pending</div>
+                            <div class="transaction-date">2025-05-20</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Channel Section -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-users"></i>
+                    <span>Join Our Channel</span>
+                </div>
+                <p style="margin-bottom: 15px; color: var(--text-secondary);">Connect, learn, and share with fellow Safon users</p>
+                
+                <div class="channel-card">
+                    <div class="channel-icon">
+                        <i class="fab fa-telegram"></i>
+                    </div>
+                    <div class="channel-title">Safon Community</div>
+                    <div class="channel-description">
+                        Become part of our vibrant channel to get tips, ask questions, and stay updated on the latest features.
+                    </div>
+                    <button class="join-btn" id="joinBtn">
+                        <i class="fab fa-telegram"></i> Join Channel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2025 Safon. All rights reserved.</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
